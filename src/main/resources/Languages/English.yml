@@ -1,0 +1,9 @@
+# If you would like to use color code, please use section (§).
+
+# Message on permission denied
+PermissionDenied: "§cYou do not have permission"
+
+# Message on saving player data
+# Those will used only when Haze plugin is disabled.
+BeginSaving: "§9Saving player data..."
+EndSaving: "§9Saving completed!"

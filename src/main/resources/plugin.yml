@@ -1,0 +1,30 @@
+name: mcMMORewards
+version: 1.0.0
+api-version: 1.13
+main: com.github.okocraft.mcmmorewards.McMMORewards
+author: lazy_gon
+depend: [mcMMO]
+commands:
+  mcmmorewards:
+    description: Base Command of mcMMORewards plugin.
+    usage: /<command> help
+    aliases: [mmoreward, mmorew, mr]
+
+permissions:
+  mcmmorewards.*:
+    description: Includes all permissions.
+    default: op
+    children:
+      mcmmorewards.command.*: true
+  mcmmorewards.command.*:
+    description: For command /mcmmorewards *
+    default: op
+    children:
+      mcmmorewards.command.help: true
+      mcmmorewards.command.reload: true
+  mcmmorewards.command.help:
+    description: For command /mcmmorewards help
+    default: true
+  mcmmorewards.command.reload:
+    description: For command /mcmmorewards reload
+    default: op

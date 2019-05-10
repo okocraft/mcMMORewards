@@ -1,0 +1,47 @@
+# setting1 is example of using full feature of reward.
+# You can use %player% and %level% in all section.
+# if a section is removed, that will be ignored. (or use default value)
+setting1:
+  GlobalMessages: # no section -> ignored
+    - '%player% have reached %level% level.'
+
+  PlayerMessages: # no section -> ignored
+    - 'You have reached %level% level.'
+    - 'Conguratulations!'
+
+  ConsoleCommands: # no section -> ignored
+    - 'give %player% diamond 1'
+
+  PlayerCommands: # no section -> ignored
+    - 'broadcast i got diamond with %level% level!'
+
+  SkillType: 'POWER' #ACROBATICS, ARCHERY, ALCHEMY... no section -> 'POWER' will be used.
+  
+  # matching levels are 5 10 15 20...
+  LevelDistance: 5 # no section -> ignored
+
+  # reward will be given on specified levels.
+  # if LevelDistance include same level, reward will be given twice.
+  RewardLevels: # no section -> ignored      if both LevelDistance and RewardLevels are unset, reward will not be given.
+  - 777
+
+# This is example of sending message to player on every level up.
+setting2:
+  PlayerMessages:
+    - 'Your level have increased to %level%.'
+  LevelDistance: 1
+
+# This is example of giving reward only once at specific level.
+setting3:
+  PlayerMessages:
+  - 'You achieved 1000 level.'
+  RewardLevels:
+  - 1000
+
+# This is example of giveng reward when acrobatics level increased to 300
+setting4:
+  ConsoleCommands:
+  - 'give %player% diamond 1'
+  RewardLevels:
+  - 300
+  SkillType: 'ACROBATICS'
