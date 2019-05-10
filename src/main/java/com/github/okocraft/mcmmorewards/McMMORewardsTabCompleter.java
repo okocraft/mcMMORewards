@@ -19,16 +19,12 @@ public class McMMORewardsTabCompleter implements TabCompleter {
         List<String> arg0List = Arrays.asList("reload");
 
         if (args.length == 1) {
-            switch (args[0].toLowerCase()) {
-            case "reload":
-                if (Commands.hasPermission(sender, "mcmmorewards.command.reload"))
-                    return resultList;
-                return StringUtil.copyPartialMatches(args[0], arg0List, resultList);
-
-            }
+            if (!sender.hasPermission("mcmmorewards.command.reload"))
+                return resultList;
+            return StringUtil.copyPartialMatches(args[0], arg0List, resultList);
         }
 
-        if (!arg0List.contains(args[0].toLowerCase())) return resultList;
+        if (!arg0List.contains(args[0])) return resultList;
 
         return null;
     }
