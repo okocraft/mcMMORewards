@@ -1,124 +1,111 @@
 package com.github.okocraft.mcmmorewards;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.IntStream;
-
 import com.gmail.nossr50.api.ExperienceAPI;
 import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
-
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-//import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
-public class PlayerLevelUpListener implements Listener {
+import java.util.ArrayList;
+import java.util.List;
 
-    Map<String, MemorySection> settings = new HashMap<>();
+class PlayerLevelUpListener implements Listener {
 
-    protected PlayerLevelUpListener(Plugin plugin) {
-        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
-        settings.clear();
-        McMMORewards.getInstance().getConfigManager().getRewardConfig().getConfig().getValues(false).entrySet()
-                .forEach(setting -> {
-                    if (setting.getValue().getClass().getSimpleName().equals("MemorySection"))
-                        settings.put(setting.getKey(), (MemorySection) setting.getValue());
+    List<MemorySection> settings = new ArrayList<>();
+
+    PlayerLevelUpListener(Plugin plugin) {
+        McMMORewards.getInstance()
+                .getConfigManager().getRewardConfig()
+                .getConfig().getValues(false)
+                .values()
+                .forEach(value -> {
+                    if (value instanceof MemorySection section)
+                        settings.add(section);
                 });
 
-        // HandlerList.unregisterAll(this);
+        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.MONITOR)
     private void onPlayerLevelUp(McMMOPlayerLevelUpEvent event) {
-
         if (event.isCancelled()) return;
 
         Player player = event.getPlayer();
         int gainedLevelTotal = event.getLevelsGained();
 
-        IntStream.rangeClosed(1, gainedLevelTotal).forEach(gainedLevel -> {
+        int basePowerLevel = ExperienceAPI.getPowerLevel(player) - gainedLevelTotal;
+        int baseSkillLevel = event.getSkillLevel() - gainedLevelTotal;
 
-            for (String setting : settings.keySet()) {
-
-                MemorySection config = settings.get(setting);
-
+        for (int gainedLevel = 1; gainedLevel <= gainedLevelTotal; gainedLevel++) {
+            for (var section : settings) {
+                String settingSkillTypeName = section.getString("SkillType", "POWER").toUpperCase();
                 int baseLevel;
-                String settingSkillTypeName = config.getString("SkillType", "POWER").toUpperCase();
 
-                if (!settingSkillTypeName.equalsIgnoreCase("POWER")
-                        && !settingSkillTypeName.equalsIgnoreCase(event.getSkill().getName()))
+                if (settingSkillTypeName.equalsIgnoreCase("POWER")) {
+                    baseLevel = basePowerLevel;
+                } else if (settingSkillTypeName.equalsIgnoreCase(event.getSkill().name())) {
+                    baseLevel = baseSkillLevel;
+                } else {
                     continue;
-
-                switch (settingSkillTypeName) {
-
-                case "POWER":
-                    baseLevel = ExperienceAPI.getPowerLevel(player) - gainedLevelTotal;
-                    break;
-                default:
-                    baseLevel = event.getSkillLevel() - gainedLevelTotal;
-                    break;
                 }
 
                 int newLevel = baseLevel + gainedLevel;
 
-                if (config.isSet("RewardLevels")) {
-                    List<Integer> rewardLevels = config.getIntegerList("RewardLevels");
-                    if (rewardLevels.contains(Integer.valueOf(newLevel))) {
-                        giveReward(config, newLevel, player);
+                if (section.isSet("RewardLevels")) {
+                    List<Integer> rewardLevels = section.getIntegerList("RewardLevels");
+                    if (rewardLevels.contains(newLevel)) {
+                        giveReward(section, newLevel, player);
                     }
                 }
 
-                int levelDistance = config.getInt("LevelDistance", Integer.MAX_VALUE);
-                if (levelDistance != Integer.MAX_VALUE) {
-                    int matchingFirstLevel = IntStream.iterate(1, x -> x + 1).map(count -> count * levelDistance)
-                            .filter(eachLevel -> eachLevel >= newLevel).findFirst().orElse(Integer.MAX_VALUE);
+                int levelDistance = section.getInt("LevelDistance", 0);
 
-                    if (matchingFirstLevel != newLevel)
-                        continue;
-
-                    giveReward(config, newLevel, player);
+                if (levelDistance != 0 && newLevel % levelDistance == 0) {
+                    giveReward(section, newLevel, player);
                 }
             }
-        });
+        }
     }
 
     private static void giveReward(MemorySection config, int level, Player player) {
-
         if (config.isSet("GlobalMessages")) {
-            config.getStringList("GlobalMessages").forEach(message -> {
-                String messageReplaced = replaceStringVariables(message, level, player.getName());
-                Bukkit.broadcastMessage(messageReplaced);
-            });
+            for (var message : config.getStringList("GlobalMessages")) {
+                sendMessage(Bukkit.getServer(), replaceStringVariables(message, level, player.getName()));
+            }
         }
 
         if (config.isSet("PlayerMessages")) {
-            config.getStringList("PlayerMessages").forEach(message -> {
-                String messageReplaced = replaceStringVariables(message, level, player.getName());
-                player.sendMessage(messageReplaced);
-            });
+            for (var message : config.getStringList("PlayerMessages")) {
+                sendMessage(player, replaceStringVariables(message, level, player.getName()));
+            }
         }
 
         if (config.isSet("ConsoleCommands")) {
-            config.getStringList("ConsoleCommands").forEach(command -> {
+            for (var command : config.getStringList("ConsoleCommands")) {
                 String commandReplaced = replaceStringVariables(command, level, player.getName());
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandReplaced);
-            });
+            }
         }
 
         if (config.isSet("PlayerCommands")) {
-            config.getStringList("PlayerCommands").forEach(command -> {
+            for (var command : config.getStringList("PlayerCommands")) {
                 String commandReplaced = replaceStringVariables(command, level, player.getName());
                 Bukkit.dispatchCommand(player, commandReplaced);
-            });
+            }
         }
     }
 
     private static String replaceStringVariables(String original, int level, String playerName) {
-        return original.replaceAll("%level%", String.valueOf(level)).replaceAll("%player%", playerName);
+        return original.replace("%level%", String.valueOf(level)).replace("%player%", playerName);
+    }
+
+    private static void sendMessage(Audience receiver, String message) {
+        receiver.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(message));
     }
 }

@@ -1,42 +1,27 @@
 package com.github.okocraft.mcmmorewards;
 
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 
-import lombok.Getter;
-
 public class ConfigManager {
 
-    private Plugin plugin;
+    private final Plugin plugin;
+    private final CustomConfig rewardConfig;
 
-    @Getter FileConfiguration defaultConfig;
-
-    @Getter private String languageFileName;
-    @Getter private CustomConfig languageConfig;
-    @Getter private CustomConfig rewardConfig;
-
-    /**
-     * コンストラクタ
-     * @param plugin
-     */
-    protected ConfigManager(Plugin plugin){
+    protected ConfigManager(Plugin plugin) {
         this.plugin = plugin;
-        defaultConfig = plugin.getConfig();
-        rewardConfig = new CustomConfig(plugin, "RewardConfig.yml");
-        languageFileName = defaultConfig.getString("LanguageFile", "japanese.yml");
-        languageConfig = new CustomConfig(plugin, "Languages/" + languageFileName);
-        plugin.saveDefaultConfig();
-        rewardConfig.saveDefaultConfig();
+        this.rewardConfig = new CustomConfig(plugin, "RewardConfig.yml");
     }
 
-    /**
-     * 全てのコンフィグをリロードする。
-     */
-    protected void reloadConfig(){
+    public CustomConfig getRewardConfig() {
+        return rewardConfig;
+    }
+
+    protected void reloadConfig() {
+        plugin.saveDefaultConfig();
         plugin.reloadConfig();
-        languageFileName = defaultConfig.getString("LanguageFile", "japanese.yml");
-        languageConfig.reloadConfig();
+
+        rewardConfig.saveDefaultConfig();
         rewardConfig.reloadConfig();
 
         HandlerList.unregisterAll(plugin);

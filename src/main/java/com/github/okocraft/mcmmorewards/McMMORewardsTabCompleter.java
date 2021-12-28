@@ -1,32 +1,23 @@
 package com.github.okocraft.mcmmorewards;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.util.StringUtil;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 
 public class McMMORewardsTabCompleter implements TabCompleter {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-
-        List<String> resultList = new ArrayList<>();
-
-        List<String> arg0List = Arrays.asList("reload");
-
-        if (args.length == 1) {
-            if (!sender.hasPermission("mcmmorewards.command.reload"))
-                return resultList;
-            return StringUtil.copyPartialMatches(args[0], arg0List, resultList);
+        if (args.length == 1 && args[0].length() < 7 &&
+                args[0].toLowerCase(Locale.ENGLISH).startsWith("reload") &&
+                sender.hasPermission("mcmmorewards.command.reload")) {
+            return List.of("reload");
+        } else {
+            return Collections.emptyList();
         }
-
-        if (!arg0List.contains(args[0])) return resultList;
-
-        return null;
     }
-
 }

@@ -1,38 +1,41 @@
 package com.github.okocraft.mcmmorewards;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import lombok.Getter;
-
 public class McMMORewards extends JavaPlugin {
 
-	private static McMMORewards instance;
-	@Getter
-	private ConfigManager configManager;
+    private static McMMORewards instance;
 
-	@Override
-	public void onEnable() {
+    private ConfigManager configManager;
 
-		configManager = new ConfigManager(this);
+    @Override
+    public void onEnable() {
+        configManager = new ConfigManager(this);
 
-		getCommand("mcmmorewards").setExecutor(new Commands());
-		getCommand("mcmmorewards").setTabCompleter(new McMMORewardsTabCompleter());
+        var command = getCommand("mcmmorewards");
 
-		new PlayerLevelUpListener(this);
-	}
+        if (command != null) {
+            command.setExecutor(new Commands());
+            command.setTabCompleter(new McMMORewardsTabCompleter());
+        }
 
-	@Override
-	public void onDisable() {
-		Bukkit.getOnlinePlayers().forEach(Player::closeInventory);
-		HandlerList.unregisterAll(this);
-	}
+        new PlayerLevelUpListener(this);
+    }
 
-	public static McMMORewards getInstance() {
-		if (instance == null)
-			instance = (McMMORewards) Bukkit.getServer().getPluginManager().getPlugin("McMMORewards");
-		return instance;
-	}
+    @Override
+    public void onDisable() {
+        HandlerList.unregisterAll(this);
+    }
+
+    public ConfigManager getConfigManager() {
+        return configManager;
+    }
+
+    public static McMMORewards getInstance() {
+        if (instance == null)
+            instance = (McMMORewards) Bukkit.getServer().getPluginManager().getPlugin("McMMORewards");
+        return instance;
+    }
 }

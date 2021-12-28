@@ -1,25 +1,19 @@
 package com.github.okocraft.mcmmorewards;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.logging.Level;
-
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
+
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 public class CustomConfig {
     private FileConfiguration config = null;
     private final File configFile;
     private final String file;
     private final Plugin plugin;
-
-    public CustomConfig(Plugin plugin) {
-        this(plugin, "config.yml");
-    }
 
     public CustomConfig(Plugin plugin, String fileName) {
         this.plugin = plugin;
@@ -38,16 +32,6 @@ public class CustomConfig {
         return config;
     }
 
-    public void saveConfig() {
-        if (config == null)
-            return;
-        try {
-            getConfig().save(configFile);
-        } catch (IOException e) {
-            plugin.getLogger().log(Level.SEVERE, "Could not save config to " + configFile, e);
-        }
-    }
-
     public void reloadConfig() {
         config = YamlConfiguration.loadConfiguration(configFile);
 
@@ -55,6 +39,7 @@ public class CustomConfig {
         if (defConfigStream == null) return;
 
         config.setDefaults(
-                YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream, StandardCharsets.UTF_8)));
+                YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream, StandardCharsets.UTF_8))
+        );
     }
 }
