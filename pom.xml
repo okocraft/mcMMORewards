@@ -6,6 +6,8 @@
     <artifactId>mcmmorewards</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
+    <name>mcMMORewards</name>
+
     <properties>
         <java.version>17</java.version>
         <project.charset>UTF-8</project.charset>
