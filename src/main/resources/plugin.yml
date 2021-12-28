@@ -1,14 +1,15 @@
 name: mcMMORewards
 version: 1.0.0
-api-version: 1.13
-main: com.github.okocraft.mcmmorewards.McMMORewards
-author: lazy_gon
-depend: [mcMMO]
+api-version: 1.18
+main: net.okocraft.mcmmorewards.McMMORewards
+authors: [ lazy_gon, Siroshun09 ]
+depend: [ mcMMO ]
+
 commands:
   mcmmorewards:
     description: Base Command of mcMMORewards plugin.
     usage: /<command> help
-    aliases: [mmoreward, mmorew, mr]
+    aliases: [ mmoreward, mmorew, mr ]
 
 permissions:
   mcmmorewards.*:

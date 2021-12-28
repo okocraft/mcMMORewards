@@ -1,4 +1,4 @@
-package com.github.okocraft.mcmmorewards;
+package net.okocraft.mcmmorewards;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

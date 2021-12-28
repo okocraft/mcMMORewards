@@ -1,4 +1,4 @@
-package com.github.okocraft.mcmmorewards;
+package net.okocraft.mcmmorewards;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;

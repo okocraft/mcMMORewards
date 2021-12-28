@@ -1,4 +1,4 @@
-package com.github.okocraft.mcmmorewards;
+package net.okocraft.mcmmorewards;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;

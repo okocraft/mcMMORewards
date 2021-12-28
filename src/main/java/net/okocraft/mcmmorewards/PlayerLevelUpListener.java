@@ -1,4 +1,4 @@
-package com.github.okocraft.mcmmorewards;
+package net.okocraft.mcmmorewards;
 
 import com.gmail.nossr50.api.ExperienceAPI;
 import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
