@@ -3,21 +3,21 @@ package com.github.okocraft.mcmmorewards;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 
-public class ConfigManager {
+class ConfigManager {
 
     private final Plugin plugin;
     private final CustomConfig rewardConfig;
 
-    protected ConfigManager(Plugin plugin) {
+    ConfigManager(Plugin plugin) {
         this.plugin = plugin;
         this.rewardConfig = new CustomConfig(plugin, "RewardConfig.yml");
     }
 
-    public CustomConfig getRewardConfig() {
+    CustomConfig getRewardConfig() {
         return rewardConfig;
     }
 
-    protected void reloadConfig() {
+    void reloadConfig() {
         plugin.saveDefaultConfig();
         plugin.reloadConfig();
 
