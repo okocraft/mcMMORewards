@@ -18,9 +18,6 @@ class ConfigManager {
     }
 
     void reloadConfig() {
-        plugin.saveDefaultConfig();
-        plugin.reloadConfig();
-
         rewardConfig.saveDefaultConfig();
         rewardConfig.reloadConfig();
 
