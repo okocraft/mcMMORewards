@@ -13,6 +13,7 @@ public class McMMORewards extends JavaPlugin {
     @Override
     public void onEnable() {
         configManager = new ConfigManager(this);
+        configManager.reloadConfig();
 
         var command = getCommand("mcmmorewards");
 
@@ -20,8 +21,6 @@ public class McMMORewards extends JavaPlugin {
             command.setExecutor(new Commands());
             command.setTabCompleter(new McMMORewardsTabCompleter());
         }
-
-        new PlayerLevelUpListener(this);
     }
 
     @Override
