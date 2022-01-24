@@ -1,7 +1,0 @@
-#
-# Configuration File of OkoLevel plugin.
-#
-# If you want use color code, use section §.
-
-# Language file in /Languages
-LanguageFile: 'Japanese.yml'
